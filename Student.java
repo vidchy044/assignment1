@@ -4,6 +4,8 @@ student ID : 672115044
 */
 import java.io.*;
 import java.util.*;
+import java.io.FileNotFoundException;
+import java.sql.SQLFeatureNotSupportedException;
 class Studentvalue{
     private String SID;
     private String firstName;
@@ -17,7 +19,7 @@ class Studentvalue{
   
   public String getSID(){return SID;}
   public String getFirstname(){return firstName;}
-  public char getLastname(){return lastName.charAt(0);}
+  public String getLastname(){return lastName;}
 
   public String toString(){
   return this.SID + " " + this.firstName + " " + this.lastName;
@@ -25,11 +27,18 @@ class Studentvalue{
 }
 public class Student{
   public static void main(String[] args) throws FileNotFoundException{
-      File f = new File("C:\\Users\\vidch\\OneDrive\\Desktop\\เนยขมปี๋\\ADT\\class_roaster67.csv");
+    Scanner input = new Scanner(System.in);
+      String intp = input.nextLine();
+
+        StringTokenizer ch = new StringTokenizer(intp, " ");
+        String choice = ch.nextToken();
+        String file = ch.nextToken();
+
+      File f = new File(file);
       Scanner in = new Scanner(f);
 
       for(int i=0;i<7;i++){
-      in.nextLine();
+         in.nextLine();
       }
 
       Vector<Studentvalue> student = new Vector<Studentvalue>();
@@ -37,22 +46,27 @@ public class Student{
       while(in.hasNextLine()){
         String dataLine = in.nextLine();
         StringTokenizer stu = new StringTokenizer(dataLine.trim(),",");
-        
         stu.nextToken();
         student.addElement(new Studentvalue(stu.nextToken(),stu.nextToken(),stu.nextToken()));
       }
-      Scanner sc = new Scanner(System.in);
-      String choice = sc.nextLine();
-      if(choice.equals("-n")){
+      
+      switch (choice) {
+        case "-n":
         SortStudentid(student);
-      }else if(choice.equals("-f")){
+            break;
+        case "-f":
         Sortfirstname(student);
-      }else if(choice.equals("-l")){
+            break;
+        case "-l":
         Sortlastname(student);
-      }else if(choice.equals("-s")){
-        String name = sc.nextLine();
-        Sortindex(student, name);
-      }
+            break;
+        case "-s":
+        String find = ch.nextToken().toUpperCase().trim();
+        Sortindex(student, find);
+            break;
+        default:
+            break;
+    }
    }
   
   public static void SortStudentid(Vector<Studentvalue> student){
@@ -68,23 +82,18 @@ public class Student{
     }
   }
   public static void Sortlastname(Vector<Studentvalue> student){
-    for (char lastLetter = 'A';lastLetter<='Z';lastLetter++){
-      for(int i=0; i<student.size(); i++){
-          if(student.get(i).getLastname()==lastLetter){
-              System.out.println(student.get(i));
-          }
-      }
+    student.sort(Comparator.comparing(Studentvalue::getLastname));
+        for (Studentvalue s : student) {
+         System.out.println(s);
     }
-    }
-  public static void Sortindex(Vector<Studentvalue> student,String name){
-    String Name = name.toUpperCase();
+  }
+  public static void Sortindex(Vector<Studentvalue> student,String find){
     for (int j = 0; j < student.size(); j++) {
       String fname = student.get(j).getFirstname().toUpperCase().trim();
-        if (fname.equals(Name)) {
+        if (fname.equals(find)) {
             System.out.println("found at index : " + j);
             break;
         }
     }
 }
 }
-
